@@ -8,6 +8,7 @@ import javax.swing.Timer;
 public class Field extends JPanel{
     private ArrayList<BouncingBall> balls = new ArrayList<BouncingBall>(10);
     private boolean paused;
+    private boolean pausedTwo;
 
     private Timer repaintTimer = new Timer(10, new ActionListener() {
         @Override
@@ -37,16 +38,24 @@ public class Field extends JPanel{
         paused = true;
     }
 
+    public synchronized void pauseLittle(){
+        pausedTwo = true;
+    }
 
 
     public synchronized void resume(){
         paused = false;
+        pausedTwo = false;
         notifyAll();
     }
 
     public synchronized void canMove(BouncingBall ball) throws InterruptedException {
         if(paused){
             wait();
+        }
+        if (pausedTwo) {
+            if(ball.getRadius() < 10)
+                wait();
         }
     }
 }
